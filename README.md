@@ -212,7 +212,7 @@ For technical support or questions:
 
 ---
 
-Built with ❤️ for Weatherhaven's deployable shelter solutions.
+Built with github and cursor, deployed in vercel for Weatherhaven's deployable shelter solutions.
 
 ## Latest Update
 - Fixed Desert Tan open model path issue

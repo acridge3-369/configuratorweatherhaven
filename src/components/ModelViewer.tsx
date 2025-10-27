@@ -285,8 +285,8 @@ function TreccModel({
     const loadModelUrl = async () => {
       try {
         const filename = modelPath || 'trecc.glb';
-        console.log('🎨 Loading model:', filename);
-        console.log('🎨 Model URL will be:', `https://d3kx2t94cz9q1y.cloudfront.net/${filename}`);
+        console.log(' Loading model:', filename);
+        console.log(' Model URL will be:', `https://d3kx2t94cz9q1y.cloudfront.net/${filename}`);
         
         // Add timeout for large models (especially green model at 528MB)
         const timeoutPromise = new Promise((_, reject) => {
@@ -297,33 +297,33 @@ function TreccModel({
         const awsUrl = await Promise.race([urlPromise, timeoutPromise]) as string;
         
         setActualModelPath(awsUrl);
-        console.log('🎨 Using AWS model URL:', awsUrl);
+        console.log(' Using AWS model URL:', awsUrl);
       } catch (error) {
         console.error('❌ AWS failed for model:', modelPath, error);
         console.error('❌ Error details:', error);
         
         // If compressed model fails, try fallback to original
         if (modelPath?.includes('Model_stowed_green-v1')) {
-          console.log('🔄 Compressed green model failed, trying fallback to original...');
+          console.log(' Compressed green model failed, trying fallback to original...');
           try {
             const fallbackUrl = await getModelUrl('Greenstowedreduced.glb');
             setActualModelPath(fallbackUrl);
-            console.log('✅ Fallback to original green model successful');
+            console.log(' Fallback to original green model successful');
             return;
           } catch (fallbackError) {
-            console.error('❌ Fallback also failed:', fallbackError);
+            console.error(' Fallback also failed:', fallbackError);
           }
         }
         
         // Fallback to default tan model if any model fails
-        console.log('🔄 Model failed, using default fallback...');
+        console.log(' Model failed, using default fallback...');
         try {
           const fallbackUrl = await getModelUrl('Tanstowedreduced.glb');
           setActualModelPath(fallbackUrl);
-          console.log('✅ Fallback to default tan model successful');
+          console.log(' Fallback to default tan model successful');
           return;
         } catch (fallbackError) {
-          console.error('❌ Fallback also failed:', fallbackError);
+          console.error(' Fallback also failed:', fallbackError);
         }
         
         setHasError(true);
@@ -343,11 +343,11 @@ function TreccModel({
   // Debug model loading
   useEffect(() => {
     if (gltf) {
-      console.log('🎨 GLTF loaded successfully:', modelUrl);
-      console.log('🎨 GLTF scene:', gltf.scene);
-      console.log('🎨 GLTF children count:', gltf.scene?.children?.length);
+      console.log(' GLTF loaded successfully:', modelUrl);
+      console.log(' GLTF scene:', gltf.scene);
+      console.log(' GLTF children count:', gltf.scene?.children?.length);
     } else {
-      console.log('🎨 GLTF still loading:', modelUrl);
+      console.log(' GLTF still loading:', modelUrl);
     }
   }, [gltf, modelUrl]);
   
@@ -355,7 +355,7 @@ function TreccModel({
   useEffect(() => {
     if (actualModelPath && !gltf) {
       const timeout = setTimeout(() => {
-        console.log('⏰ Model loading timeout - showing error');
+        console.log(' Model loading timeout - showing error');
         setModelLoadTimeout(true);
       }, 10000); // 10 second timeout
       
@@ -372,10 +372,10 @@ function TreccModel({
   // Debug scene creation
   useEffect(() => {
     if (scene) {
-      console.log('🎨 Scene created successfully:', scene);
-      console.log('🎨 Scene children:', scene.children.length);
+      console.log(' Scene created successfully:', scene);
+      console.log(' Scene children:', scene.children.length);
     } else {
-      console.log('🎨 Scene not created yet');
+      console.log(' Scene not created yet');
     }
   }, [scene]);
 
@@ -409,7 +409,7 @@ function TreccModel({
 
     // Special handling for forest model - it's a complete scene
     if (modelPath?.includes('Forest and shelter')) {
-      console.log('🌲 Loading forest and shelter model...');
+      console.log(' Loading forest and shelter model...');
       // Forest model is a complete scene, just center it
       let box = new THREE.Box3().setFromObject(scene);
       const center = box.getCenter(new THREE.Vector3());
@@ -424,7 +424,7 @@ function TreccModel({
 
     // Performance optimization: reduce polygon count for large models
     if (modelPath?.includes('Model_stowed_green')) {
-      console.log('🎨 Optimizing large green model for performance...');
+      console.log(' Optimizing large green model for performance...');
       scene.traverse((child: any) => {
         if (child.isMesh) {
           child.geometry.computeBoundingBox();
@@ -459,10 +459,10 @@ function TreccModel({
 
   // Apply color to the model
   useEffect(() => {
-    console.log('🎨 Color effect triggered - scene:', !!scene, 'color:', color);
+    console.log(' Color effect triggered - scene:', !!scene, 'color:', color);
     
     if (!scene || !color) {
-      console.log('🎨 Color effect skipped - scene:', !!scene, 'color:', color);
+      console.log(' Color effect skipped - scene:', !!scene, 'color:', color);
       return;
     }
 
@@ -490,8 +490,8 @@ function TreccModel({
 
 /* ---------------- Colour helper ---------------- */
 function applyBodyColor(root: THREE.Object3D, hex: string) {
-  console.log('🎨 applyBodyColor called with:', hex);
-  console.log('🎨 Root object:', root);
+  console.log(' applyBodyColor called with:', hex);
+  console.log(' Root object:', root);
 
   root.traverse((child) => {
     if (child instanceof THREE.Mesh) {
@@ -507,7 +507,7 @@ function applyBodyColor(root: THREE.Object3D, hex: string) {
                   mat.name.toLowerCase().includes('frame') ||
                   mat.name === '' || // Default material name
                   mat.color.getHex() === 0x3c3b2e) { // Current default color
-                console.log('🎨 Changing material color:', mat.name, 'to', hex);
+                console.log(' Changing material color:', mat.name, 'to', hex);
                 mat.color.setHex(parseInt(hex.replace('#', ''), 16));
                 mat.needsUpdate = true;
               }
@@ -521,7 +521,7 @@ function applyBodyColor(root: THREE.Object3D, hex: string) {
               child.material.name.toLowerCase().includes('frame') ||
               child.material.name === '' ||
               child.material.color.getHex() === 0x3c3b2e) {
-            console.log('🎨 Changing material color:', child.material.name, 'to', hex);
+            console.log(' Changing material color:', child.material.name, 'to', hex);
             child.material.color.setHex(parseInt(hex.replace('#', ''), 16));
             child.material.needsUpdate = true;
           }
